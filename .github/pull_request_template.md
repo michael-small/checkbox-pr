@@ -2,4 +2,4 @@
 <!-- Describe your changes here -->
 
 ## Checklist
-- [] Ran InteliJ script to check for required input regressions in the component library
+- [] Ran [InteliJ script](https://google.com) to check for required input regressions in the component library
