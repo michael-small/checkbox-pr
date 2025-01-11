@@ -1,0 +1,30 @@
+name: PR Checkbox Validator
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+jobs:
+  check-box-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify Required Checkbox
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const body = pr.body || '';
+            
+            // Look for a checked box [x] in the PR description
+            const hasCheckedBox = body.includes('- [x]') || body.includes('* [x]');
+            
+            if (!hasCheckedBox) {
+              core.setFailed('Pull request is missing a checked checkbox. Please add a checked item using "- [x]" or "* [x]" in the description.');
+              
+              // Optional: Add a comment to the PR
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: '❌ This pull request is missing a required checked checkbox. Please edit the description to include a checked item using "- [x]" or "* [x]".'
+              });
+            }
