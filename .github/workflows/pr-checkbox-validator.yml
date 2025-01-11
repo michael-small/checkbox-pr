@@ -23,7 +23,7 @@ jobs:
             const hasCheckedBox = body.includes('- [x]') || body.includes('* [x]');
             
             if (!hasCheckedBox) {
-              core.setFailed('Pull request is missing a checked checkbox. Please add a checked item using "- [x]" or "* [x]" in the description.');
+              core.setFailed('If a library component input was changed, run the [whoa](www.google.com) and then add `- [x]` in the description.');
               
               // Optional: Add a comment to the PR
               await github.rest.issues.createComment({
