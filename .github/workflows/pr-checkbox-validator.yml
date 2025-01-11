@@ -23,7 +23,7 @@ jobs:
             const hasCheckedBox = body.includes('- [x]') || body.includes('* [x]');
             
             if (!hasCheckedBox) {
-              core.setFailed('If a library component input was changed, run the [whoa](www.google.com) and then add `- [x]` in the description.');
+              core.setFailed('If a l.');
               
               // Optional: Add a comment to the PR
               await github.rest.issues.createComment({
