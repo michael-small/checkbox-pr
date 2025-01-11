@@ -22,7 +22,7 @@ jobs:
             const hasCheckedBox = body.includes('- [x]') || body.includes('* [x]');
             
             // Message to post
-            const messageBody = '❌ This pull request is missing a required checked checkbox. Please edit the description to include a checked item using "- [x]" or "* [x]".\n\nNeed help? Visit [Google](https://www.google.com) for more information.';
+            const messageBody = '❌ This pull request is missing a required manual sign off. You can click to check it off.';
             
             // Find existing comments by the GitHub Actions bot
             const comments = await github.rest.issues.listComments({
@@ -37,7 +37,7 @@ jobs:
             );
             
             if (!hasCheckedBox) {
-              core.setFailed('Pull request is missing a checked checkbox. Please add a checked item using "- [x]" or "* [x]" in the description.');
+              core.setFailed('This pull request is missing a required manual sign off. You can click to check it off.');
               
               if (botComment) {
                 // Update existing comment
