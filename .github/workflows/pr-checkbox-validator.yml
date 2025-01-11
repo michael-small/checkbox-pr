@@ -1,9 +1,8 @@
-name: Ran Required Inputs `- [x]` in Body
+name: PR Checkbox Validator
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
 
-# Add permissions block to allow commenting
 permissions:
   pull-requests: write
   issues: write
@@ -22,14 +21,46 @@ jobs:
             // Look for a checked box [x] in the PR description
             const hasCheckedBox = body.includes('- [x]') || body.includes('* [x]');
             
+            // Message to post
+            const messageBody = '❌ This pull request is missing a required checked checkbox. Please edit the description to include a checked item using "- [x]" or "* [x]".\n\nNeed help? Visit [Google](https://www.google.com) for more information.';
+            
+            // Find existing comments by the GitHub Actions bot
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            
+            const botComment = comments.data.find(comment => 
+              comment.user.login === 'github-actions[bot]' && 
+              comment.body.includes('missing a required checked checkbox')
+            );
+            
             if (!hasCheckedBox) {
-              core.setFailed('Need to check off that the thing was done');
+              core.setFailed('Pull request is missing a checked checkbox. Please add a checked item using "- [x]" or "* [x]" in the description.');
               
-              // Optional: Add a comment to the PR
-              await github.rest.issues.createComment({
+              if (botComment) {
+                // Update existing comment
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: botComment.id,
+                  body: messageBody
+                });
+              } else {
+                // Create new comment if none exists
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.issue.number,
+                  body: messageBody
+                });
+              }
+            } else if (botComment) {
+              // If checkbox is now checked and comment exists, delete the comment
+              await github.rest.issues.deleteComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body: '❌ This pull request is miclude a `- [x]` [Google](https://www.google.com).'
+                comment_id: botComment.id
               });
             }
