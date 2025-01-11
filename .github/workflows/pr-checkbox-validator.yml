@@ -1,4 +1,4 @@
-name: PR Checkbox Validator
+name: Ran Required Inputs `- [x]` in Body
 on:
   pull_request:
     types: [opened, edited, synchronize, reopened]
